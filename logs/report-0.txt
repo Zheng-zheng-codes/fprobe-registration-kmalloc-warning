@@ -1,0 +1,130 @@
+------------[ cut here ]------------
+1
+WARNING: mm/slub.c:5459 at ___kmalloc_large_node+0x13f/0x180 mm/slub.c:5459, CPU#2: syz.4.4204/72997
+Modules linked in:
+CPU: 2 UID: 0 PID: 72997 Comm: syz.4.4204 Tainted: G             L      7.4.0-rc2-kernsight-kasan #1 PREEMPT(full) 
+Tainted: [L]=SOFTLOCKUP
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:___kmalloc_large_node+0x13f/0x180 mm/slub.c:5459
+Code: ed 0f 85 62 ff ff ff 45 31 f6 eb c9 48 81 ff 00 00 40 00 0f 86 00 ff ff ff 80 3d 73 f2 55 10 00 75 0b c6 05 6a f2 55 10 01 90 <0f> 0b 90 48 83 c4 08 31 c0 5d 41 5c 41 5d 41 5e 41 5f e9 1a 48 a7
+RSP: 0018:ffa000000599f8b0 EFLAGS: 00010246
+RAX: ffffffff81e66759 RBX: 0000000000000dc0 RCX: ffa00000140fb000
+RDX: 00000000ffffffff RSI: 0000000000000dc0 RDI: 0000000002000030
+RBP: 00000000ffffffff R08: ffffffff81e6672f R09: 0000000000000008
+R10: ffa000000599f990 R11: 0000000000000000 R12: 0000000002000030
+R13: 0000000000100000 R14: dffffc0000000000 R15: 0000000002000030
+FS:  00007fc82f004640(0000) GS:ff1100020dc1e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000563d7375f000 CR3: 0000000066fc7000 CR4: 0000000000753ef0
+PKRU: 80000000
+Call Trace:
+ <TASK>
+ __kmalloc_large_node_noprof+0x1f/0x80 mm/slub.c:5502
+ __do_kmalloc_node mm/slub.c:5519 [inline]
+ __kmalloc_noprof+0x53c/0x7f0 mm/slub.c:5556
+ _kmalloc_noprof include/linux/slab.h:995 [inline]
+ _kzalloc_noprof include/linux/slab.h:1312 [inline]
+ fprobe_init kernel/trace/fprobe.c:918 [inline]
+ register_fprobe_ips+0x199/0x1df0 kernel/trace/fprobe.c:1013
+ bpf_kprobe_multi_link_attach+0xf50/0x13f0 kernel/trace/bpf_trace.c:2944
+ link_create kernel/bpf/syscall.c:5952 [inline]
+ __sys_bpf+0x4a20/0x4ef0 kernel/bpf/syscall.c:6535
+ __do_sys_bpf kernel/bpf/syscall.c:6582 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6579 [inline]
+ __x64_sys_bpf+0xd0/0x140 kernel/bpf/syscall.c:6579
+ do_syscall_x64 arch/x86/entry/syscall_64.c:61 [inline]
+ do_syscall_64+0x132/0x7c0 arch/x86/entry/syscall_64.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc82e1b2b7d
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc82f003f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fc82e445fa0 RCX: 00007fc82e1b2b7d
+RDX: 0000000000000028 RSI: 0000200000000080 RDI: 000000000000001c
+RBP: 00007fc82e250273 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc82e446038 R14: 00007fc82e445fa0 R15: 00007fc82efe4000
+ </TASK>
+
+<<<<<<<<<<<<<<< tail report >>>>>>>>>>>>>>>
+
+Modules linked in:
+CPU: 2 UID: 0 PID: 72997 Comm: syz.4.4204 Tainted: G             L      7.4.0-rc2-kernsight-kasan #1 PREEMPT(full) 
+Tainted: [L]=SOFTLOCKUP
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:___kmalloc_large_node+0x13f/0x180
+Code: ed 0f 85 62 ff ff ff 45 31 f6 eb c9 48 81 ff 00 00 40 00 0f 86 00 ff ff ff 80 3d 73 f2 55 10 00 75 0b c6 05 6a f2 55 10 01 90 <0f> 0b 90 48 83 c4 08 31 c0 5d 41 5c 41 5d 41 5e 41 5f e9 1a 48 a7
+RSP: 0018:ffa000000599f8b0 EFLAGS: 00010246
+RAX: ffffffff81e66759 RBX: 0000000000000dc0 RCX: ffa00000140fb000
+RDX: 00000000ffffffff RSI: 0000000000000dc0 RDI: 0000000002000030
+RBP: 00000000ffffffff R08: ffffffff81e6672f R09: 0000000000000008
+R10: ffa000000599f990 R11: 0000000000000000 R12: 0000000002000030
+R13: 0000000000100000 R14: dffffc0000000000 R15: 0000000002000030
+FS:  00007fc82f004640(0000) GS:ff1100020dc1e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000563d7375f000 CR3: 0000000066fc7000 CR4: 0000000000753ef0
+PKRU: 80000000
+Call Trace:
+ <TASK>
+ __kmalloc_large_node_noprof+0x1f/0x80
+ __kmalloc_noprof+0x53c/0x7f0
+ register_fprobe_ips+0x199/0x1df0
+ bpf_kprobe_multi_link_attach+0xf50/0x13f0
+ __sys_bpf+0x4a20/0x4ef0
+ __x64_sys_bpf+0xd0/0x140
+ do_syscall_64+0x132/0x7c0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc82e1b2b7d
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc82f003f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fc82e445fa0 RCX: 00007fc82e1b2b7d
+RDX: 0000000000000028 RSI: 0000200000000080 RDI: 000000000000001c
+RBP: 00007fc82e250273 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc82e446038 R14: 00007fc82e445fa0 R15: 00007fc82efe4000
+ </TASK>
+Kernel panic - not syncing: kernel: panic_on_warn set ...
+CPU: 2 UID: 0 PID: 72997 Comm: syz.4.4204 Tainted: G             L      7.4.0-rc2-kernsight-kasan #1 PREEMPT(full) 
+Tainted: [L]=SOFTLOCKUP
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x3d/0x1b0
+ vpanic+0x726/0x7f0
+ panic+0xc7/0xd0
+ check_panic_on_warn+0xb6/0xc0
+ __warn+0x10d/0x400
+ __report_bug+0x4aa/0x5a0
+ report_bug+0xb3/0x210
+ handle_bug+0x2d7/0x4e0
+ exc_invalid_op+0x35/0x80
+ asm_exc_invalid_op+0x1a/0x20
+RIP: 0010:___kmalloc_large_node+0x13f/0x180
+Code: ed 0f 85 62 ff ff ff 45 31 f6 eb c9 48 81 ff 00 00 40 00 0f 86 00 ff ff ff 80 3d 73 f2 55 10 00 75 0b c6 05 6a f2 55 10 01 90 <0f> 0b 90 48 83 c4 08 31 c0 5d 41 5c 41 5d 41 5e 41 5f e9 1a 48 a7
+RSP: 0018:ffa000000599f8b0 EFLAGS: 00010246
+RAX: ffffffff81e66759 RBX: 0000000000000dc0 RCX: ffa00000140fb000
+RDX: 00000000ffffffff RSI: 0000000000000dc0 RDI: 0000000002000030
+RBP: 00000000ffffffff R08: ffffffff81e6672f R09: 0000000000000008
+R10: ffa000000599f990 R11: 0000000000000000 R12: 0000000002000030
+R13: 0000000000100000 R14: dffffc0000000000 R15: 0000000002000030
+ __kmalloc_large_node_noprof+0x1f/0x80
+ __kmalloc_noprof+0x53c/0x7f0
+ register_fprobe_ips+0x199/0x1df0
+ bpf_kprobe_multi_link_attach+0xf50/0x13f0
+ __sys_bpf+0x4a20/0x4ef0
+ __x64_sys_bpf+0xd0/0x140
+ do_syscall_64+0x132/0x7c0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc82e1b2b7d
+Code: 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc82f003f98 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fc82e445fa0 RCX: 00007fc82e1b2b7d
+RDX: 0000000000000028 RSI: 0000200000000080 RDI: 000000000000001c
+RBP: 00007fc82e250273 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fc82e446038 R14: 00007fc82e445fa0 R15: 00007fc82efe4000
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+<<<<<<<<<<<<<<< tail report >>>>>>>>>>>>>>>
+
