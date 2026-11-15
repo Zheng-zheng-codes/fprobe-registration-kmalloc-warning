@@ -1,8 +1,8 @@
 # WARNING in register_fprobe_ips (mm/slub.c:5459, v7.4-rc2)
 
 Syzkaller-found bug on Linux v7.4-rc2, reproduced and verified on the same
-kernel build. Externally reproduced **2/2 times** on fresh VMs using the
-exact procedure described below.
+kernel build. Externally reproduced **3/3 times** on fresh VMs (see
+"Verified runs" below).
 
 ## Summary
 
@@ -63,12 +63,12 @@ This matches the fprobe allocation:
 In the guest, as root:
 
 ```sh
-syz-execprog -procs=8 -threaded -repeat=0 -executor ./syz-executor repro.kernsight.prog
+syz-execprog -procs=8 -threaded -repeat=1 -executor ./syz-executor repro.kernsight.prog
 ```
 
 ### What you will see
 
-After **~6-13 minutes** the serial console (or `dmesg`) will show:
+After **~2-13 minutes** the serial console (or `dmesg`) will show:
 
 ```
 WARNING: mm/slub.c:5459 at ___kmalloc_large_node+0x13f/0x180 mm/slub.c:5459, CPU#N: syz.N.NNN/NNNNN
@@ -82,10 +82,12 @@ followed by a kernel panic (escalated by `panic_on_warn=1`).
 |---|---|---|---|
 | 1 | 2026-11-14 | 384.3 s | `logs/external-verification/external-verification-serial.log` |
 | 2 | 2026-11-15 | 774.4 s | `logs/external-verification/external-verification-serial-run2.log` |
+| 3 | 2026-11-15 | 135.9 s | `logs/external-verification/external-verification-serial-run3.log` |
 
-Both runs used the exact same procedure: chunked single-pass replay of the
-84-entry recipe (25 programs per chunk, sequential chunks on a fresh VM),
-matching the fuzzing pipeline's verifyOnce semantics.
+Runs 1-2 used chunked single-pass replay of the 84-entry recipe (25 programs
+per chunk, sequential chunks on a fresh VM), matching the fuzzing pipeline's
+verifyOnce semantics. Run 3 replayed the same `repro.kernsight.prog` directly
+in a single pass on a fresh VM, with the command shown above.
 
 ## Why the reproducer is a multi-program set
 
@@ -102,7 +104,7 @@ set constructs the required state before the triggering operation.
 - `reproducer/repro.priming.prog` — state-priming program set (pipeline repro recipe)
 - `logs/log-0.txt`, `logs/report-0.txt` — original syzkaller execution log and crash report
 - `logs/machineInfo-*.txt`, `logs/title-stat.json` — guest environment info and title statistics
-- `logs/external-verification/` — external verification serial consoles (2 runs)
+- `logs/external-verification/` — external verification serial consoles (3 runs)
 
 ## Notes for maintainers
 
