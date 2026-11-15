@@ -14,8 +14,10 @@ QEMU command line:
     -netdev user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22 -device e1000,netdev=net0 \
     -display none -vga none -serial file:serial.log -no-reboot
 
-reproducer execution (in the guest, as root):
-  syz-execprog -procs=8 -threaded -repeat=0 -executor ./syz-executor repro.kernsight.prog
+reproducer execution (in the guest, as root; run 3 command):
+  syz-execprog -procs=8 -threaded -repeat=1 -executor ./syz-executor repro.kernsight.prog
+
+(runs 1-2 used chunked single-pass replay of the same 84-program set)
 
 syz-execprog / syz-executor built from syzkaller at commit
   853b104bb454141a5b0fc0e4218ec78e9f34ffb1
