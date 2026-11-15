@@ -15,9 +15,36 @@ RIP: 0010:___kmalloc_large_node+0x13f/0x180 mm/slub.c:5459
 ```
 
 The warning is triggered inside `___kmalloc_large_node()` (mm/slub.c:5459)
-during a fprobe registration operation that requires a large kmalloc
-allocation. The guest runs with `panic_on_warn=1`, which escalates this
+by a ~32 MiB kzalloc request from `register_fprobe_ips()` during BPF
+kprobe-multi link attachment. The guest runs with `panic_on_warn=1`, which escalates this
 warning to a kernel panic.
+
+## Key technical evidence
+
+Program 78 in the reproducer set contains the triggering BPF operation:
+
+```
+r0 = bpf$PROG_LOAD(0x5, ...)   // BPF_PROG_TYPE_TRACING
+bpf$BPF_LINK_CREATE_XDP(0x1c, ..., @kprobe_multi=@addrs={...}, ...)
+```
+
+The `@kprobe_multi` branch specifies `cnt = 0x100000` (1,048,576), which
+exactly matches `MAX_KPROBE_MULTI_CNT` (`1U << 20`, defined in
+kernel/trace/bpf_trace.c:45). The request passes the existing count limit
+check (`cnt > MAX_KPROBE_MULTI_CNT` at bpf_trace.c:2846) and proceeds to
+`register_fprobe_ips()`, which calls `kzalloc_flex(*hlist_array, array,
+num)` (kernel/trace/fprobe.c:918) with `num = 0x100000`.
+
+The crash registers show the allocation size:
+
+```
+RDI: 0x2000030  (= 33,554,480 bytes ≈ 32 MiB + 48 bytes header)
+R13: 0x100000   (= cnt)
+```
+
+This matches `num * sizeof(struct hlist_head) + header` for 1,048,576
+entries. The allocation passed the BPF count limit but the resulting
+~32 MiB kzalloc triggered the SLUB size check WARNING.
 
 ## How to reproduce
 
@@ -78,8 +105,11 @@ set constructs the required state before the triggering operation.
 
 ## Notes for maintainers
 
-- The warning is in the SLUB allocator's large allocation path during
-  fprobe registration; the crafted workload triggers a large kmalloc
-  that hits an unexpected condition in the allocator.
+- The existing `MAX_KPROBE_MULTI_CNT` limit (1M) passes the count check,
+  but the resulting ~32 MiB kzalloc in `register_fprobe_ips()` triggers
+  the SLUB size check. A question for maintainers: should the BPF count
+  limit also account for the actual memory footprint of the fprobe
+  internal array, or is the SLUB warning expected for this allocation
+  size?
 - We can provide the kernel image, additional crash instances or raw
   artifacts on request.
